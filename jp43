@@ -1,0 +1,81 @@
+#!/bin/bash
+
+echo '{
+  "json": {
+    "array.preferSingleLine": true,
+    "object.preferSingleLine": true,
+    "commentLine.forceSpaceAfterSlashes": true,
+    "ignoreNodeCommentText": "dprint-ignore",
+    "indentWidth": 2,
+    "lineWidth": 120,
+    "newLineKind": "lf",
+    "useTabs": false
+  },
+  "includes": ["**/*.{json}"],
+  "excludes": [
+    "**/*-lock.json"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/json-0.17.0.wasm"
+  ]
+}' > /tmp/.dprint.json
+
+
+cat ${1:-/dev/stdin} \
+| jq 'del(
+.s, 
+.c, 
+.id,
+.ctx,
+.msg,
+.attr.type,
+.attr.command.readConcern,
+.attr.command.runtimeConstants,
+.attr.command._use44SortKeys,
+.attr.command.shardVersion,
+.attr.command.databaseVersion,
+.attr.command.clientOperationKey,
+.attr.command.lsid,
+.attr.command."$clusterTime",
+.attr.command."$audit",
+.attr.command."$client",
+.attr.command."$configServerState",
+.attr.command."$db",
+.attr.command."$readPreference",
+.attr.command."$configTime",
+.attr.command."$topologyTime",
+.attr.command.cursor,
+.attr.command.maxTimeMS,
+.attr.command.needsMerge,
+.attr.command.let,
+.attr.command.fromMongos,
+.attr.command.collation,
+.attr.command.maxTimeMSOpOnly,
+.attr.command.writeConcern,
+.attr.cursorExhausted,
+.attr.numYields,
+.attr.locks,
+.attr.readConcern,
+.attr.writeConcern,
+.attr.cursorid,
+.attr.remote,
+.attr.flowControl,
+.attr.protocol,
+.attr.originatingCommand.lsid,
+.attr.originatingCommand.readConcern,
+.attr.originatingCommand.needsMerge,
+.attr.originatingCommand.let,
+.attr.originatingCommand.fromMongos,
+.attr.originatingCommand.collation,
+.attr.originatingCommand.writeConcern,
+.attr.originatingCommand.shardVersion,
+.attr.originatingCommand.clientOperationKey,
+.attr.originatingCommand.cursor,
+.attr.originatingCommand.mayBypassWriteBlocking,
+.attr.originatingCommand."$configTime",
+.attr.originatingCommand."$topologyTime",
+.attr.originatingCommand."$audit",
+.attr.originatingCommand."$client",
+.attr.originatingCommand."$clusterTime",
+.attr.originatingCommand."$db")' \
+| dprint fmt --stdin json --config /tmp/.dprint.json
